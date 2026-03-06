@@ -27,6 +27,12 @@ class TaskViewSet(viewsets.ModelViewSet):
             queryset = queryset.order_by('priority')
         return queryset
 
+    def get_object(self):
+        obj = super().get_object()
+        if obj.user != self.request.user:
+            raise exceptions.PermissionDenied("Sorry, no permission to this task.")
+        return obj
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
